@@ -84,9 +84,9 @@ ifneq (,$(findstring unix,$(platform)))
 	ENDIANNESS_DEFINES := -DLSB_FIRST
 	LDFLAGS += -static-libgcc -static-libstdc++ -pthread
 	ifeq ($(platform),unix)
-		NAMCOS_OPENGL = 1
-		NAMCOS_OPENGL_ES2 = 1
-		NAMCOS_OPENGL_LIBS += -lEGL -lGLESv2
+		NAMCOS_OPENGL = 0
+		NAMCOS_OPENGL_ES2 = 0
+		NAMCOS_OPENGL_LIBS +=
 	else ifneq (,$(findstring android,$(platform)))
 		NAMCOS_OPENGL = 1
 		NAMCOS_OPENGL_ES2 = 1
@@ -470,9 +470,9 @@ else ifeq ($(platform), funkey)
 # (armv7 a7, hard point, neon based) ### 
 # NESC, SNESC, C64 mini 
 else ifeq ($(platform), classic_armv7_a7)
-	NAMCOS_OPENGL = 1
-	NAMCOS_OPENGL_ES2 = 1
-	NAMCOS_OPENGL_LIBS += -lEGL -lGLESv2
+	NAMCOS_OPENGL = 0
+	NAMCOS_OPENGL_ES2 = 0
+	NAMCOS_OPENGL_LIBS +=
 	CC = arm-linux-gnueabihf-gcc
 	CXX = arm-linux-gnueabihf-g++
 	AR = arm-linux-gnueabihf-ar
