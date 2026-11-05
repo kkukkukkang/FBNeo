@@ -86,6 +86,12 @@ ifneq (,$(findstring unix,$(platform)))
 	SHARED := -shared -Wl,-no-undefined -Wl,--version-script=$(VERSION_SCRIPT)
 	ENDIANNESS_DEFINES := -DLSB_FIRST
 	LDFLAGS += -static-libgcc -static-libstdc++ -pthread
+	PLATFORM_FLAGS = -marm -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -march=armv7ve
+	HAVE_NEON = 1
+	USE_CYCLONE = 1
+	ARCH = arm
+	CFLAGS += $(PLATFORM_FLAGS)
+	CXXFLAGS += $(PLATFORM_FLAGS)
 	ifeq ($(platform),unix)
 		NAMCOS_OPENGL = 0
 		NAMCOS_OPENGL_ES2 = 0
