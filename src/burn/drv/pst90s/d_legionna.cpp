@@ -268,7 +268,7 @@ static struct BurnInputInfo GrainbowInputList[] = {
 	{"P2 Button 2",		BIT_DIGITAL,	DrvJoy1 + 13,	"p2 fire 2"	},
 	{"P2 Button 3",		BIT_DIGITAL,	DrvJoy1 + 14,	"p2 fire 3"	},
 
-	{"P3 Start",		BIT_DIGITAL,	DrvJoy1 + 8,	"p3 start"	},
+	{"P3 Start",		BIT_DIGITAL,	DrvJoy3 + 8,	"p3 start"	},
 	{"P3 Up",			BIT_DIGITAL,	DrvJoy2 + 0,	"p3 up"		},
 	{"P3 Down",			BIT_DIGITAL,	DrvJoy2 + 1,	"p3 down"	},
 	{"P3 Left",			BIT_DIGITAL,	DrvJoy2 + 2,	"p3 left"	},
@@ -277,7 +277,7 @@ static struct BurnInputInfo GrainbowInputList[] = {
 	{"P3 Button 2",		BIT_DIGITAL,	DrvJoy2 + 5,	"p3 fire 2"	},
 	{"P3 Button 3",		BIT_DIGITAL,	DrvJoy2 + 6,	"p3 fire 3"	},
 
-	{"P4 Start",		BIT_DIGITAL,	DrvJoy1 + 9,	"p4 start"	},
+	{"P4 Start",		BIT_DIGITAL,	DrvJoy3 + 9,	"p4 start"	},
 	{"P4 Up",			BIT_DIGITAL,	DrvJoy2 + 8,	"p4 up"		},
 	{"P4 Down",			BIT_DIGITAL,	DrvJoy2 + 9,	"p4 down"	},
 	{"P4 Left",			BIT_DIGITAL,	DrvJoy2 + 10,	"p4 left"	},
@@ -928,7 +928,7 @@ static UINT16 __fastcall heatbrl_main_read_word(UINT32 address)
 
 static void __fastcall denjinmk_palette_write_word(UINT32 address, UINT16 data)
 {
-	*((UINT16*)(DrvAllRAM + 0x3800 + ((address & 0xffe) ^ 2))) = data;
+	*((UINT16*)(DrvAllRAM + 0x3800 + ((address & 0xffe) ^ 2))) = BURN_ENDIAN_SWAP_INT16(data);
 }
 
 static void __fastcall denjinmk_palette_write_byte(UINT32 address, UINT8 data)
@@ -1408,11 +1408,11 @@ static INT32 GodzillaInit()
 	GenericTilemapSetOffsets(TMAP_GLOBAL, 0, 0);
 	GenericTilemapSetOffsets(3, 4, 4); // text layer offset
 
-	*((UINT16*)(Drv68KROM + 0xbe0e + 0x0a)) = 0xb000; // fix collisions (hack)
-	*((UINT16*)(Drv68KROM + 0xbe0e + 0x1a)) = 0xb800;
-	*((UINT16*)(Drv68KROM + 0xbb0a + 0x0a)) = 0xb000;
-	*((UINT16*)(Drv68KROM + 0xbb0a + 0x1a)) = 0xb800;
-	*((UINT16*)(Drv68KROM + 0x3fffe)) = 0x61ba; // checksum
+	*((UINT16*)(Drv68KROM + 0xbe0e + 0x0a)) = BURN_ENDIAN_SWAP_INT16(0xb000); // fix collisions (hack)
+	*((UINT16*)(Drv68KROM + 0xbe0e + 0x1a)) = BURN_ENDIAN_SWAP_INT16(0xb800);
+	*((UINT16*)(Drv68KROM + 0xbb0a + 0x0a)) = BURN_ENDIAN_SWAP_INT16(0xb000);
+	*((UINT16*)(Drv68KROM + 0xbb0a + 0x1a)) = BURN_ENDIAN_SWAP_INT16(0xb800);
+	*((UINT16*)(Drv68KROM + 0x3fffe)) = BURN_ENDIAN_SWAP_INT16(0x61ba); // checksum
 
 	DrvDoReset();
 
@@ -2910,4 +2910,46 @@ struct BurnDriver BurnDrvGrainbowk = {
 	NULL, grainbowkRomInfo, grainbowkRomName, NULL, NULL, NULL, NULL, GrainbowInputInfo, GrainbowDIPInfo,
 	GrainbowInit, DrvExit, DrvFrame, GrainbowDraw, DrvScan, &DrvRecalc, 0x801,
 	320, 224, 4, 3
+};
+
+//========================
+// Add Korean Translation
+//========================
+
+// Legionnaire (Korean Translation)
+
+static struct BurnRomInfo legionnakRomDesc[] = {
+	{ "1k.u025",					0x020000, 0xf9484681, 1 | BRF_PRG | BRF_ESS }, //  0 68K Code
+	{ "2k.u024",					0x020000, 0x683aa84d, 1 | BRF_PRG | BRF_ESS }, //  1
+	{ "3k.u026",					0x020000, 0xae2845f9, 1 | BRF_PRG | BRF_ESS }, //  2
+	{ "4k.u023",					0x020000, 0x05c8707b, 1 | BRF_PRG | BRF_ESS }, //  3
+
+	{ "6.u1110",					0x010000, 0xfe7b8d06, 2 | BRF_PRG | BRF_ESS }, //  4 Z80 Code
+
+	{ "7k.u077",					0x010000, 0x2a26649f, 3 | BRF_GRA },           //  5 Characters and Foreground Tiles
+	{ "8k.u072",					0x010000, 0xb8aa1462, 3 | BRF_GRA },           //  6
+
+	{ "legionnire_obj1.u0815",		0x100000, 0xd35602f5, 4 | BRF_GRA },           //  7 Sprites
+	{ "legionnire_obj2.u0814",		0x100000, 0x351d3917, 4 | BRF_GRA },           //  8
+
+	{ "legionnire_backk.u075",		0x100000, 0x9efa2a14, 5 | BRF_GRA },           //  9 Background and Midground Tiles
+
+	{ "5.u106",						0x020000, 0x21d09bde, 6 | BRF_SND },           // 10 Samples
+
+	{ "copx-d1.u0330",				0x080000, 0x029bc402, 7 | BRF_GRA },           // 11 COP ROM
+
+	{ "leg007.u0910",				0x000200, 0xcc6da568, 8 | BRF_GRA },           // 12 Priority PROM?
+};
+
+STD_ROM_PICK(legionnak)
+STD_ROM_FN(legionnak)
+
+struct BurnDriver BurnDrvLegionnak = {
+	"legionnak", "legionna", NULL, NULL, "2026",
+	"Legionnaire (Korean Translation)\0", NULL, "TAD Corporation", "Miscellaneous",
+	L"Legionnaire (Korean Translation)\0\uB9AC\uC804\uC5D0\uC5B4 (\uD55C\uAD6D\uC5B4 \uBC88\uC5ED)\0", NULL, NULL, NULL,
+	BDF_GAME_WORKING | BDF_CLONE | BDF_HACK | BDF_HISCORE_SUPPORTED, 2, HARDWARE_MISC_POST90S, GBF_SCRFIGHT, 0,
+	NULL, legionnakRomInfo, legionnakRomName, NULL, NULL, NULL, NULL, LegionnaInputInfo, LegionnaDIPInfo,
+	LegionnaInit, DrvExit, DrvFrame, LegionnaDraw, DrvScan, &DrvRecalc, 0x801,
+	256, 224, 4, 3
 };

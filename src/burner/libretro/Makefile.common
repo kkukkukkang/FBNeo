@@ -282,18 +282,6 @@ ifeq (,$(findstring msvc,$(platform)))
 	CXXFLAGS += -std=gnu++11
 endif
 
-#ifeq ($(USE_X64_DRC), 1)
-#	FBNEO_DEFINES  += -DXBYAK_NO_OP_NAMES -DMIPS3_X64_DRC
-#	FBNEO_SRC_DIRS += $(MIPS3_X64_DRC_CPU_DIR)
-#	ifeq (,$(findstring msvc,$(platform)))
-#		CXXFLAGS += -std=gnu++11
-#	endif
-#else
-#	ifeq (,$(findstring msvc,$(platform)))
-#		CXXFLAGS += -std=gnu++98
-#	endif
-#endif
-
 NEON_FLAGS=
 
 ifeq ($(HAVE_NEON), 1)

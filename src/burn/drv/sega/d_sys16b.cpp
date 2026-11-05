@@ -11660,7 +11660,7 @@ static INT32 IsgsmInit()
 		nRet = BurnLoadRom(System16Rom, 0x80, 1); if (nRet) return 1;
 
 		for (UINT32 i = 0; i < 0x10000; i++) {
-			pTemp[i ^ 0x4127] = BITSWAP16(Rom[i], 6, 14, 4, 2, 12, 10, 8, 0, 1, 9, 11, 13, 3, 5, 7, 15);
+			pTemp[i ^ 0x4127] = BURN_ENDIAN_SWAP_INT16(BITSWAP16(BURN_ENDIAN_SWAP_INT16(Rom[i]), 6, 14, 4, 2, 12, 10, 8, 0, 1, 9, 11, 13, 3, 5, 7, 15));
 		}
 
 		memcpy(Rom, pTemp, 0x20000);
@@ -11693,7 +11693,7 @@ static INT32 ShinfzInit()
 		UINT16 *Rom = (UINT16*)(System16Rom + 0x100000);
 
 		for (UINT32 i = 0; i < 0x100000; i++) {
-			pTemp[i ^ 0x68956] = BITSWAP16(Rom[i], 8, 4, 12, 3, 6, 7, 1, 0, 15, 11, 5, 14, 10, 2, 9, 13);
+			pTemp[i ^ 0x68956] = BURN_ENDIAN_SWAP_INT16(BITSWAP16(BURN_ENDIAN_SWAP_INT16(Rom[i]), 8, 4, 12, 3, 6, 7, 1, 0, 15, 11, 5, 14, 10, 2, 9, 13));
 		}
 
 		memcpy(Rom, pTemp, 0x200000);
@@ -11717,7 +11717,7 @@ static INT32 TetrbxInit()
 		UINT16 *Rom = (UINT16*)(System16Rom + 0x100000);
 
 		for (UINT32 i = 0; i < nCartSize >> 1; i++) {
-			pTemp[i ^ 0x2a6e6] = BITSWAP16(Rom[i], 4, 0, 12, 5, 7, 3, 1, 14, 10, 11, 9, 6, 15, 2, 13, 8);
+			pTemp[i ^ 0x2a6e6] = BURN_ENDIAN_SWAP_INT16(BITSWAP16(BURN_ENDIAN_SWAP_INT16(Rom[i]), 4, 0, 12, 5, 7, 3, 1, 14, 10, 11, 9, 6, 15, 2, 13, 8));
 		}
 
 		memcpy(Rom, pTemp, nCartSize);
@@ -11905,6 +11905,47 @@ struct BurnDriver BurnDrvToryumondx = {
 	NULL, NULL, NULL, NULL,
 	BDF_GAME_WORKING | BDF_CLONE | BDF_HACK | BDF_HISCORE_SUPPORTED, 2, HARDWARE_SEGA_SYSTEM16B | HARDWARE_SEGA_5797, GBF_PUZZLE, 0,
 	NULL, ToryumondxRomInfo, ToryumondxRomName, NULL, NULL, NULL, NULL, System16bInputInfo, ToryumondxDIPInfo,
+	System16Init, System16Exit, System16BFrame, System16BRender, System16Scan,
+	NULL, 0x1800, 320, 224, 4, 3
+};
+
+//========================
+// Add Korean Translation
+//========================
+
+static struct BurnRomInfo ToryumonkRomDesc[] = {
+	{ "epr-17689k.a2",  0x20000, 0xa0dcd1a5, SYS16_ROM_PROG | BRF_ESS | BRF_PRG },
+	{ "epr-17688k.a1",  0x20000, 0x094f52e7, SYS16_ROM_PROG | BRF_ESS | BRF_PRG },
+
+	{ "epr-17700k.b11", 0x40000, 0xbf421744, SYS16_ROM_TILES | BRF_GRA },
+	{ "epr-17701k.b12", 0x40000, 0x26988e78, SYS16_ROM_TILES | BRF_GRA },
+	{ "epr-17702k.b13", 0x40000, 0xefd36a21, SYS16_ROM_TILES | BRF_GRA },
+
+	{ "epr-17692k.b1",  0x20000, 0xf6c20dc9, SYS16_ROM_SPRITES | BRF_GRA },
+	{ "epr-17695k.b4",  0x20000, 0xa03e1781, SYS16_ROM_SPRITES | BRF_GRA },
+	{ "epr-17693.b2",   0x20000, 0x4a350b3e, SYS16_ROM_SPRITES | BRF_GRA },
+	{ "epr-17696.b5",   0x20000, 0x6edb54f1, SYS16_ROM_SPRITES | BRF_GRA },
+	{ "epr-17694.b3",   0x20000, 0xb296d71d, SYS16_ROM_SPRITES | BRF_GRA },
+	{ "epr-17697.b6",   0x20000, 0x6ccb7b28, SYS16_ROM_SPRITES | BRF_GRA },
+	{ "epr-17698k.b7",  0x20000, 0xf0558200, SYS16_ROM_SPRITES | BRF_GRA },
+	{ "epr-17699k.b8",  0x20000, 0x15466fe7, SYS16_ROM_SPRITES | BRF_GRA },
+
+	{ "epr-17691.a13",  0x08000, 0x14205388, SYS16_ROM_Z80PROG | BRF_ESS | BRF_PRG },
+
+	{ "epr-17690.a11",  0x40000, 0x4f9ba4e4, SYS16_ROM_UPD7759DATA | BRF_SND },
+
+	{ "315-5298.b9",    0x000eb, 0x39b47212, BRF_OPT }, // PLD
+};
+
+STD_ROM_PICK(Toryumonk)
+STD_ROM_FN(Toryumonk)
+
+struct BurnDriver BurnDrvToryumonk = {
+	"toryumonk", "toryumon", NULL, NULL, "2026",
+	"Toryumon (Korean Translation)\0", NULL, "Sega", "System 16B",
+	L"Toryumon (Korean Translation)\0\uB4F1\uC6A9\uBB38 (\uD55C\uAD6D\uC5B4 \uBC88\uC5ED)\0", NULL, NULL, NULL,
+	BDF_GAME_WORKING | BDF_CLONE | BDF_HACK | BDF_HISCORE_SUPPORTED, 2, HARDWARE_SEGA_SYSTEM16B | HARDWARE_SEGA_5797, GBF_PUZZLE, 0,
+	NULL, ToryumonkRomInfo, ToryumonkRomName, NULL, NULL, NULL, NULL, System16bfire1InputInfo, ToryumonDIPInfo,
 	System16Init, System16Exit, System16BFrame, System16BRender, System16Scan,
 	NULL, 0x1800, 320, 224, 4, 3
 };

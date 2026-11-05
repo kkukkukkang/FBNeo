@@ -69,9 +69,9 @@ static struct BurnInputInfo gunbirdInputList[] = {
 	{"Service",			BIT_DIGITAL,	DrvInp1 + 4,	"service"			},
 //	{"Tilt",			BIT_DIGITAL,	DrvInp1 + 6,	"tilt"				},
 
-	{"Dip 1",			BIT_DIPSWITCH,	((UINT8*)(DrvInput + 2)) + 1, "dip"	},
-	{"Dip 2",			BIT_DIPSWITCH,	((UINT8*)(DrvInput + 2)) + 0, "dip"	},
-	{"Dip 3",			BIT_DIPSWITCH,	((UINT8*)(DrvInput + 3)) + 0, "dip"	},
+	{"Dip 1",			BIT_DIPSWITCH,	((UINT8*)(DrvInput + 2)) + BYTE_XOR_LE(1), "dip"	},
+	{"Dip 2",			BIT_DIPSWITCH,	((UINT8*)(DrvInput + 2)) + BYTE_XOR_LE(0), "dip"	},
+	{"Dip 3",			BIT_DIPSWITCH,	((UINT8*)(DrvInput + 3)) + BYTE_XOR_LE(0), "dip"	},
 };
 
 STDINPUTINFO(gunbird)
@@ -110,10 +110,10 @@ static struct BurnInputInfo btlkroadInputList[] = {
 	{"Service",			BIT_DIGITAL,	DrvInp1 + 4,	"service"			},
 //	{"Tilt",			BIT_DIGITAL,	DrvInp1 + 6,	"tilt"				},
 
-	{"Dip 1",			BIT_DIPSWITCH,	((UINT8*)(DrvInput + 2)) + 1, "dip"	},
-	{"Dip 2",			BIT_DIPSWITCH,	((UINT8*)(DrvInput + 2)) + 0, "dip"	},
-	{"Region",			BIT_DIPSWITCH,	((UINT8*)(DrvInput + 3)) + 0, "dip"	},
-	{"Debug Dip",		BIT_DIPSWITCH,	((UINT8*)(DrvInput + 3)) + 1, "dip"	},
+	{"Dip 1",			BIT_DIPSWITCH,	((UINT8*)(DrvInput + 2)) + BYTE_XOR_LE(1), "dip"	},
+	{"Dip 2",			BIT_DIPSWITCH,	((UINT8*)(DrvInput + 2)) + BYTE_XOR_LE(0), "dip"	},
+	{"Region",			BIT_DIPSWITCH,	((UINT8*)(DrvInput + 3)) + BYTE_XOR_LE(0), "dip"	},
+	{"Debug Dip",		BIT_DIPSWITCH,	((UINT8*)(DrvInput + 3)) + BYTE_XOR_LE(1), "dip"	},
 };
 
 STDINPUTINFO(btlkroad)
@@ -2633,15 +2633,15 @@ struct BurnDriver BurnDrvTengaij = {
 // Sengoku Ace (Korean Translation)
 
 static struct BurnRomInfo sngkacekRomDesc[] = {
-	{ "1-u127k.bin",  0x040000, 0xf78906ff, 1 | BRF_ESS | BRF_PRG }, //  0 CPU #0 code
-	{ "2-u126k.bin",  0x040000, 0xe5a51908, 1 | BRF_ESS | BRF_PRG }, //  1
+	{ "1-u127k.bin",  0x040000, 0xda13001c, 1 | BRF_ESS | BRF_PRG }, //  0 CPU #0 code
+	{ "2-u126k.bin",  0x040000, 0x39bec5da, 1 | BRF_ESS | BRF_PRG }, //  1
 
-	{ "u14k.bin",     0x200000, 0x460c0b15, 3 | BRF_GRA },			 //  2 Sprite data
+	{ "u14k.bin",     0x200000, 0x5e5a525e, 3 | BRF_GRA },			 //  2 Sprite data
 
-	{ "u11.bin",      0x040000, 0x11a04d91, 7 | BRF_GRA },			 //  3 Sprite LUT
+	{ "u11k.bin",     0x040000, 0xce16b815, 7 | BRF_GRA },			 //  3 Sprite LUT
 
 	{ "u34.bin",      0x100000, 0xe6a75bd8, 4 | BRF_GRA },			 //  4 Tile data
-	{ "u35k.bin",     0x100000, 0x6eb5b9c6, 4 | BRF_GRA },			 //  5
+	{ "u35k.bin",     0x100000, 0xe13afd01, 4 | BRF_GRA },			 //  5
 
 	{ "3-u58.bin",    0x020000, 0x310f5c76, 2 | BRF_ESS | BRF_PRG }, //  6 CPU #1 code
 
@@ -2652,7 +2652,7 @@ STD_ROM_PICK(sngkacek)
 STD_ROM_FN(sngkacek)
 
 struct BurnDriver BurnDrvSngkacek = {
-	"sngkacek", "samuraia", NULL, NULL, "2023",
+	"sngkacek", "samuraia", NULL, NULL, "2026",
 	"Sengoku Ace (Korean Translation)\0", NULL, "Psikyo (Banpresto license)", "Psikyo 68EC020",
 	L"Sengoku Ace (Korean Translation)\0\uC804\uAD6D \uC5D0\uC774\uC2A4 (\uD55C\uAD6D\uC5B4 \uBC88\uC5ED)\0", NULL, NULL, NULL,
 	BDF_GAME_WORKING | BDF_CLONE | BDF_ORIENTATION_VERTICAL | BDF_HISCORE_SUPPORTED, 2, HARDWARE_PSIKYO, GBF_VERSHOOT, 0,

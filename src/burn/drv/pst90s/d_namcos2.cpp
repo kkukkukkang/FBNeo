@@ -642,12 +642,12 @@ static UINT16 __fastcall namcos2_68k_read_word(UINT32 address)
 	}
 
 	if ((address & 0xffffc0) == 0x420000) {
-		return *((UINT16*)(DrvC123Ctrl + (address & 0x3e)));
+		return BURN_ENDIAN_SWAP_INT16(*((UINT16*)(DrvC123Ctrl + (address & 0x3e))));
 	}
 
 	if ((address & 0xff0000) == 0x440000) {
 		if ((address & 0x301e) > 0x3016) return 0xff;
-		return *((UINT16*)(DrvPalRAM + (address & 0x301e)));
+		return BURN_ENDIAN_SWAP_INT16(*((UINT16*)(DrvPalRAM + (address & 0x301e))));
 	}
 
 	if ((address & 0xff0000) == 0x460000) {
@@ -655,7 +655,7 @@ static UINT16 __fastcall namcos2_68k_read_word(UINT32 address)
 	}
 
 	if ((address & 0xfffff0) == 0xcc0000) {
-		return *((UINT16*)(DrvRozCtrl + (address & 0x0e)));
+		return BURN_ENDIAN_SWAP_INT16(*((UINT16*)(DrvRozCtrl + (address & 0x0e))));
 	}
 
 	if ((address & 0xfffff0) == 0xd00000) {
@@ -690,7 +690,7 @@ static UINT8 __fastcall namcos2_68k_read_byte(UINT32 address)
 
 	if ((address & 0xff0000) == 0x440000) {
 		if ((address & 0x301e) > 0x3016) return 0xff;
-		return *((UINT16*)(DrvPalRAM + (address & 0x301e)));
+		return BURN_ENDIAN_SWAP_INT16(*((UINT16*)(DrvPalRAM + (address & 0x301e))));
 	}
 
 	if ((address & 0xff0000) == 0x460000) {
@@ -883,7 +883,7 @@ static void __fastcall luckywld_68k_write_byte(UINT32 address, UINT8 data)
 static UINT16 __fastcall luckywld_68k_read_word(UINT32 address)
 {
 	if ((address & 0xffffe0) == 0xd00000) {
-		return *((UINT16*)(DrvRozCtrl + (address & 0x1e)));
+		return BURN_ENDIAN_SWAP_INT16(*((UINT16*)(DrvRozCtrl + (address & 0x1e))));
 	}
 
 	if ((address & 0xfffff8) == 0xf00000) {
@@ -939,7 +939,7 @@ static void __fastcall metlhawk_68k_write_byte(UINT32 address, UINT8 data)
 static UINT16 __fastcall metlhawk_68k_read_word(UINT32 address)
 {
 	if ((address & 0xffffe0) == 0xd00000) {
-		return *((UINT16*)(DrvRozCtrl + (address & 0x0e)));
+		return BURN_ENDIAN_SWAP_INT16(*((UINT16*)(DrvRozCtrl + (address & 0x0e))));
 	}
 
 	switch (address)
@@ -4848,6 +4848,69 @@ struct BurnDriver BurnDrvValkyrie = {
 };
 
 
+// Valkyrie no Densetsu (Hack, English Translation from Namco Museum Vol. 5)
+// https://github.com/SpiralBrad/valkyrie-no-densetsu-english
+
+static struct BurnRomInfo valkyrienmv5RomDesc[] = {
+	{ "wd1mpr0.bin",	0x20000, 0xf6e93a8c, 0x01 | BRF_PRG | BRF_ESS }, //  0 Main 68K Code
+	{ "wd1mpr1.bin",	0x20000, 0x0f496013, 0x01 | BRF_PRG | BRF_ESS }, //  1
+
+	{ "wd1spr0.bin",	0x10000, 0xb2398321, 0x02 | BRF_PRG | BRF_ESS }, //  2 Sub 68K Code
+	{ "wd1spr1.bin",	0x10000, 0x38dba897, 0x02 | BRF_PRG | BRF_ESS }, //  3
+
+	{ "wd1snd0.bin",	0x20000, 0xd0fbf58b, 0x03 | BRF_PRG | BRF_ESS }, //  4 M6809 Code
+
+#if !defined ROM_VERIFY
+	{ "sys2mcpu.bin",	0x02000, 0xa342a97e, 0x04 | BRF_PRG | BRF_ESS }, //  5 HD68705 Code
+#endif
+	{ "sys2c65c.bin",	0x08000, 0xa5b2a4ff, 0x04 | BRF_PRG | BRF_ESS }, //  6
+
+	{ "wdobj0.bin",		0x40000, 0xe8089451, 0x05 | BRF_GRA },           //  7 Sprites
+	{ "wdobj1.bin",		0x40000, 0x7ca65666, 0x05 | BRF_GRA },           //  8
+	{ "wdobj2.bin",		0x40000, 0x7c159407, 0x05 | BRF_GRA },           //  9
+	{ "wdobj3.bin",		0x40000, 0x649f8760, 0x05 | BRF_GRA },           // 10
+	{ "wdobj4.bin",		0x40000, 0x7ca39ae7, 0x05 | BRF_GRA },           // 11
+	{ "wdobj5.bin",		0x40000, 0x9ead2444, 0x05 | BRF_GRA },           // 12
+	{ "wdobj6.bin",		0x40000, 0x9fa2ea21, 0x05 | BRF_GRA },           // 13
+	{ "wdobj7.bin",		0x40000, 0x66e07a36, 0x05 | BRF_GRA },           // 14
+
+	{ "wdchr0.bin",		0x20000, 0xdebb0116, 0x06 | BRF_GRA },           // 15 Layer Tiles
+	{ "wdchr1.bin",		0x20000, 0x8a1431e8, 0x06 | BRF_GRA },           // 16
+	{ "wdchr2.bin",		0x20000, 0x62f75f69, 0x06 | BRF_GRA },           // 17
+	{ "wdchr3.bin",		0x20000, 0xcc43bbe7, 0x06 | BRF_GRA },           // 18
+	{ "wdchr4.bin",		0x20000, 0x2f73d05e, 0x06 | BRF_GRA },           // 19
+	{ "wdchr5.bin",		0x20000, 0xb632b2ec, 0x06 | BRF_GRA },           // 20
+
+	{ "wdroz0.bin",		0x20000, 0xf776bf66, 0x07 | BRF_GRA },           // 21 Roz Layer Tiles
+	{ "wdroz1.bin",		0x20000, 0xc1a345c3, 0x07 | BRF_GRA },           // 22
+	{ "wdroz2.bin",		0x20000, 0x28ffb44a, 0x07 | BRF_GRA },           // 23
+	{ "wdroz3.bin",		0x20000, 0x7e77b46d, 0x07 | BRF_GRA },           // 24
+
+	{ "wdshape.bin",	0x20000, 0x3b5e0249, 0x08 | BRF_GRA },           // 25 Layer Tiles Mask Data
+
+	{ "wd1dat0.13s",	0x20000, 0xea209f48, 0x09 | BRF_PRG | BRF_ESS }, // 26 Shared 68K Data
+	{ "wd1dat1.13p",	0x20000, 0x04b48ada, 0x09 | BRF_PRG | BRF_ESS }, // 27
+
+	{ "wd1voi1.bin",	0x40000, 0xf1ace193, 0x0a | BRF_SND },           // 28 C140 Samples Samples
+	{ "wd1voi2.bin",	0x20000, 0xe95c5cf3, 0x0a | BRF_SND },           // 29
+
+	{ "valkyrie.nv",	0x02000, 0xd5ce4069, 0x0b | BRF_PRG | BRF_ESS},  // 30 nvram
+};
+
+STD_ROM_PICK(valkyrienmv5)
+STD_ROM_FN(valkyrienmv5)
+
+struct BurnDriver BurnDrvValkyrienmv5 = {
+	"valkyrienmv5", "valkyrie", NULL, NULL, "2026",
+	"Valkyrie no Densetsu (Hack, English Translation from Namco Museum Vol. 5)\0", NULL, "hack (SpiralBrad)", "System 2",
+	NULL, NULL, NULL, NULL,
+	BDF_GAME_WORKING | BDF_CLONE | BDF_HACK | BDF_ORIENTATION_VERTICAL | BDF_ORIENTATION_FLIPPED | BDF_HISCORE_SUPPORTED, 2, HARDWARE_MISC_PRE90S, GBF_SCRFIGHT, 0,
+	NULL, valkyrienmv5RomInfo, valkyrienmv5RomName, NULL, NULL, NULL, NULL, DefaultInputInfo, DefaultDIPInfo,
+	ValkyrieInit, Namcos2Exit, DrvFrame, DrvDraw, DrvScan, &DrvRecalc, 0x4000,
+	224, 288, 3, 4
+};
+
+
 // Rolling Thunder 2
 
 static struct BurnRomInfo rthun2RomDesc[] = {
@@ -7744,4 +7807,70 @@ struct BurnDriver BurnDrvFourtraxa = {
 	NULL, fourtraxaRomInfo, fourtraxaRomName, NULL, NULL, NULL, NULL, FourtraxInputInfo, FourtraxDIPInfo,
 	FourtraxInit, Namcos2Exit, DrvFrame, FinallapDraw, DrvScan, &DrvRecalc, 0x4000,
 	288, 224, 4, 3
+};
+
+//========================
+// Add Korean Translation
+//========================
+
+// Phelios (Korean Translation)
+
+static struct BurnRomInfo phelioskRomDesc[] = {
+	{ "ps1_mpr0k.mpr0",   0x20000, 0x785f0b2f, 0x01 | BRF_PRG | BRF_ESS }, //  0 Main 68K Code
+	{ "ps1_mpr1k.mpr1",   0x20000, 0x3232cf56, 0x01 | BRF_PRG | BRF_ESS }, //  1
+
+	{ "ps1_spr0.spr0",    0x10000, 0xe9c6987e, 0x02 | BRF_PRG | BRF_ESS }, //  2 Sub 68K Code
+	{ "ps1_spr1.spr1",    0x10000, 0x02b074fb, 0x02 | BRF_PRG | BRF_ESS }, //  3
+
+	{ "ps1_snd0.snd0",    0x20000, 0xda694838, 0x03 | BRF_PRG | BRF_ESS }, //  4 M6809 Code
+
+#if !defined ROM_VERIFY
+	{ "sys2mcpu.bin",     0x02000, 0xa342a97e, 0x04 | BRF_PRG | BRF_ESS }, //  5 HD68705 Code
+#endif
+	{ "sys2_c65c.3f",     0x08000, 0xa5b2a4ff, 0x04 | BRF_PRG | BRF_ESS }, //  6
+
+	{ "ps_obj-0k.obj0",   0x40000, 0x9afd5ebb, 0x05 | BRF_GRA },           //  7 Sprites
+	{ "ps_obj-1k.obj1",   0x40000, 0x2d36790c, 0x05 | BRF_GRA },           //  8
+	{ "ps_obj-2k.obj2",   0x40000, 0x5bee1dc9, 0x05 | BRF_GRA },           //  9
+	{ "ps_obj-3k.obj3",   0x40000, 0xb6acbd00, 0x05 | BRF_GRA },           // 10
+	{ "ps_obj-4.obj4",    0x40000, 0x81ea86c6, 0x05 | BRF_GRA },           // 11
+	{ "ps_obj-5.obj5",    0x40000, 0xaaebd51a, 0x05 | BRF_GRA },           // 12
+	{ "ps_obj-6.obj6",    0x40000, 0x032ea497, 0x05 | BRF_GRA },           // 13
+	{ "ps_obj-7.obj7",    0x40000, 0xf6183b36, 0x05 | BRF_GRA },           // 14
+
+	{ "ps_chr-0k.chr0",   0x20000, 0xd38b3ca7, 0x06 | BRF_GRA },           // 15 Layer Tiles
+	{ "ps_chr-1.chr1",    0x20000, 0x80c30742, 0x06 | BRF_GRA },           // 16
+	{ "ps_chr-2.chr2",    0x20000, 0xf4e11bf7, 0x06 | BRF_GRA },           // 17
+	{ "ps_chr-3.chr3",    0x20000, 0x97a93dc5, 0x06 | BRF_GRA },           // 18
+	{ "ps_chr-4.chr4",    0x20000, 0x81d965bf, 0x06 | BRF_GRA },           // 19
+	{ "ps_chr-5.chr5",    0x20000, 0x8ca72d35, 0x06 | BRF_GRA },           // 20
+	{ "ps_chr-6k.chr6",   0x20000, 0x6faa3706, 0x06 | BRF_GRA },           // 21
+
+	{ "ps_roz-0.roz0",    0x20000, 0x68043d7e, 0x07 | BRF_GRA },           // 22 Roz Layer Tiles
+	{ "ps_roz-1.roz1",    0x20000, 0x029802b4, 0x07 | BRF_GRA },           // 23
+	{ "ps_roz-2.roz2",    0x20000, 0xbf0b76dc, 0x07 | BRF_GRA },           // 24
+	{ "ps_roz-3.roz3",    0x20000, 0x9c821455, 0x07 | BRF_GRA },           // 25
+	{ "ps_roz-4.roz4",    0x20000, 0x63a39b7a, 0x07 | BRF_GRA },           // 26
+	{ "ps_roz-5.roz5",    0x20000, 0xfc5a99d0, 0x07 | BRF_GRA },           // 27
+	{ "ps_roz-6.roz6",    0x20000, 0xa2a17587, 0x07 | BRF_GRA },           // 28
+
+	{ "ps_shapek.shape",  0x20000, 0x0302eba7, 0x08 | BRF_GRA },           // 29 Layer Tiles Mask Data
+
+	{ "ps1_dat0.13s",     0x20000, 0xee4194b0, 0x09 | BRF_PRG | BRF_ESS }, // 30 Shared 68K Data
+	{ "ps1_dat1.13p",     0x20000, 0x5b22d714, 0x09 | BRF_PRG | BRF_ESS }, // 31
+
+	{ "ps_voi-1.voice1",  0x80000, 0xf67376ed, 0x0a | BRF_SND },           // 32 C140 Samples
+};
+
+STD_ROM_PICK(pheliosk)
+STD_ROM_FN(pheliosk)
+
+struct BurnDriver BurnDrvPheliosk = {
+	"pheliosk", "phelios", NULL, NULL, "1988",
+	"Phelios (Korean Translation)\0", NULL, "Namco", "System 2",
+	L"Phelios (Korean Translation)\0\uD3A0\uB9AC\uC624\uC2A4 (\uD55C\uAD6D\uC5B4 \uBC88\uC5ED)\0", NULL, NULL, NULL,
+	BDF_GAME_WORKING | BDF_CLONE | BDF_ORIENTATION_VERTICAL | BDF_ORIENTATION_FLIPPED | BDF_HISCORE_SUPPORTED, 2, HARDWARE_MISC_PRE90S, GBF_VERSHOOT, 0,
+	NULL, phelioskRomInfo, phelioskRomName, NULL, NULL, NULL, NULL, DefaultInputInfo, DefaultDIPInfo,
+	PheliosInit, Namcos2Exit, DrvFrame, DrvDraw, DrvScan, &DrvRecalc, 0x4000,
+	224, 288, 3, 4
 };

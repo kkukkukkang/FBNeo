@@ -2,6 +2,7 @@ extern void TaitoF3DrawCommon(INT32 scanline_start);
 extern void TaitoF3VideoInit();
 extern void TaitoF3VideoExit();
 extern void TaitoF3VideoReset();
+extern void TaitoF3VideoScan(INT32 nAction);
 
 extern INT32 f3_game;
 extern UINT32 extended_layers;

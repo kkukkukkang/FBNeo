@@ -1429,9 +1429,9 @@ static void tmp68301_update_irq_state(INT32 i)
 static void Tmp68301Reset()
 {
 	for (INT32 i = 0x80/2; i < 0x94/2; i++) {
-		RamTMP68301[i] = 0x07;
+		RamTMP68301[i] = BURN_ENDIAN_SWAP_INT16(0x07);
 	}
-	RamTMP68301[0x94/2] = 0x07f7;
+	RamTMP68301[0x94/2] = BURN_ENDIAN_SWAP_INT16(0x07f7);
 }
 
 static void tmp68301_regs_w(UINT32 addr, UINT16 /*val*/ )
@@ -1672,7 +1672,7 @@ void __fastcall grdiansPaletteWriteWord(UINT32 sekAddress, UINT16 wordValue)
 	//bprintf(PRINT_NORMAL, _T("Pal to write word value %x to location %x\n"), wordValue, sekAddress);
 	sekAddress &= 0x00FFFF;
 	sekAddress >>= 1;
-	RamPal[sekAddress] = wordValue;
+	RamPal[sekAddress] = BURN_ENDIAN_SWAP_INT16(wordValue);
 	CurPal[sekAddress] = CalcCol( wordValue );
 }
 
@@ -3570,7 +3570,7 @@ static INT32 DrvDrawBegin()
 {
 	if (bRecalcPalette) {
 		for (INT32 i=0;i<0x08000; i++)
-			CurPal[i] = CalcCol( RamPal[i] );
+			CurPal[i] = CalcCol( BURN_ENDIAN_SWAP_INT16(RamPal[i]) );
 		bRecalcPalette = 0;
 	}
 
@@ -4293,3 +4293,31 @@ struct BurnDriver BurnDrvGrdianszs = {
 };
 
 #undef GRDIANS_COMPONENT
+
+//========================
+// Add Korean Translation
+//========================
+
+static struct BurnRomInfo penbroskRomDesc[] = {
+	{ "a-blast_kor_u06.u06",	  0x080000, 0x6f570bd9, BRF_ESS | BRF_PRG },	// 68000 code
+	{ "a-blast_kor_u07.u07",	  0x080000, 0x43fafe40, BRF_ESS | BRF_PRG },
+
+	{ "a-blast_kor_u38.u38",	  0x400000, 0x6a60f0ea,	BRF_GRA },				// GFX
+	{ "a-blast_kor_u39.u39",	  0x400000, 0x53b4bc73,	BRF_GRA },
+	{ "a-blast_kor_u40.u40",	  0x400000, 0x7e8813fa,	BRF_GRA },
+
+	{ "a-blast_jpn_u18.u18",	  0x200000, 0xde4e65e2, BRF_SND },				// PCM
+};
+
+STD_ROM_PICK(penbrosk)
+STD_ROM_FN(penbrosk)
+
+struct BurnDriver BurnDrvPenbrosk = {
+	"penbrosk", "penbros", NULL, NULL, "2026",
+	"Penguin Brothers (Korean Translation)\0", NULL, "Subsino", "Newer Seta",
+	L"Penguin Brothers (Korean Translation)\0\uD3AD\uADC4 \uBE0C\uB77C\uB354\uC2A4 (\uD55C\uAD6D\uC5B4 \uBC88\uC5ED)\0", NULL, NULL, NULL,
+	BDF_GAME_WORKING | BDF_CLONE | BDF_HACK | BDF_HISCORE_SUPPORTED, 2, HARDWARE_SETA2, GBF_PLATFORM, 0,
+	NULL, penbroskRomInfo, penbroskRomName, NULL, NULL, NULL, NULL, penbrosInputInfo, penbrosDIPInfo,
+	penbrosInit, grdiansExit, grdiansFrame, DrvDraw, grdiansScan, &bRecalcPalette, 0x8000,
+	320, 224, 4, 3
+};

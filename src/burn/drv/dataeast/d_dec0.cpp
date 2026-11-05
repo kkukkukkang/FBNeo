@@ -2421,11 +2421,10 @@ static void deco_bac06_pf_control_0_w(INT32 Layer, UINT16 *Control0, INT32 Offse
 {
 	Offset &= 0x03;
 	
-	Control0[Offset] &= Mask;
-	Control0[Offset] += Data;
+	Control0[Offset] = BURN_ENDIAN_SWAP_INT16((BURN_ENDIAN_SWAP_INT16(Control0[Offset]) & Mask) + Data);
 
 	if (Offset == 2) {
-		DrvTileRamBank[Layer] = Control0[Offset] & 0x01;
+		DrvTileRamBank[Layer] = BURN_ENDIAN_SWAP_INT16(Control0[Offset]) & 0x01;
 	}
 }
 
@@ -2433,23 +2432,21 @@ static void deco_bac06_pf_control_1_w(UINT16 *Control1, INT32 Offset, UINT16 Dat
 {
 	Offset &= 0x07;
 	
-	Control1[Offset] &= Mask;
-	Control1[Offset] += Data;
+	Control1[Offset] = BURN_ENDIAN_SWAP_INT16((BURN_ENDIAN_SWAP_INT16(Control1[Offset]) & Mask) + Data);
 }
 
 static UINT16 deco_bac06_pf_data_r(INT32 Layer, UINT16 *RAM, INT32 Offset, UINT16 Mask)
 {
 	if (DrvTileRamBank[Layer] & 0x01) Offset += 0x1000;
 
-	return RAM[Offset] & Mask;
+	return BURN_ENDIAN_SWAP_INT16(RAM[Offset]) & Mask;
 }
 
 static void deco_bac06_pf_data_w(INT32 Layer, UINT16 *RAM, INT32 Offset, UINT16 Data, UINT16 Mask)
 {
 	if (DrvTileRamBank[Layer] & 0x01) Offset += 0x1000;
 	
-	RAM[Offset] &= Mask;
-	RAM[Offset] += Data;
+	RAM[Offset] = BURN_ENDIAN_SWAP_INT16((BURN_ENDIAN_SWAP_INT16(RAM[Offset]) & Mask) + Data);
 }
 
 // Rotation-handler code
@@ -3294,7 +3291,7 @@ static UINT8 __fastcall Slyspy68KReadByte(UINT32 a)
 			case 0x06: return 0x02;
 			case 0x0c: {
 				UINT16 *mem = (UINT16*)Drv68KRam;
-				return mem[0x2028/2] >> 8;
+				return BURN_ENDIAN_SWAP_INT16(mem[0x2028/2]) >> 8;
 			}
 		}
 		
@@ -3390,7 +3387,7 @@ static UINT16 __fastcall Slyspy68KReadWord(UINT32 a)
 			case 0x06: return 0x02;
 			case 0x0c: {
 				UINT16 *mem = (UINT16*)Drv68KRam;
-				return mem[0x2028/2] >> 8;
+				return BURN_ENDIAN_SWAP_INT16(mem[0x2028/2]) >> 8;
 			}
 		}
 		
@@ -3444,7 +3441,7 @@ static void __fastcall Slyspy68KWriteWord(UINT32 a, UINT16 d)
 		case 0x300004:
 		case 0x300006: {		
 			UINT16 *Control0 = (UINT16*)DrvVideo2Ctrl0Ram;
-			Control0[(a - 0x300000) >> 1] = d;
+			Control0[(a - 0x300000) >> 1] = BURN_ENDIAN_SWAP_INT16(d);
 			if (a == 0x300004) {
 				DrvTileRamBank[2] = d & 0x01;
 				if (DrvTileRamBank[2]) bprintf(PRINT_IMPORTANT, _T("68K Set Tile RAM Bank 2\n"));
@@ -3457,7 +3454,7 @@ static void __fastcall Slyspy68KWriteWord(UINT32 a, UINT16 d)
 		case 0x300014:
 		case 0x300016: {		
 			UINT16 *Control1 = (UINT16*)DrvVideo2Ctrl1Ram;
-			Control1[(a - 0x300010) >> 1] = d;
+			Control1[(a - 0x300010) >> 1] = BURN_ENDIAN_SWAP_INT16(d);
 			return;
 		}
 		
@@ -3551,7 +3548,7 @@ static void __fastcall SlyspyProt68KWriteWord(UINT32 a, UINT16 d)
 		case 0x240004:
 		case 0x240006: {		
 			UINT16 *Control0 = (UINT16*)DrvVideo1Ctrl0Ram;
-			Control0[(a - 0x240000) >> 1] = d;
+			Control0[(a - 0x240000) >> 1] = BURN_ENDIAN_SWAP_INT16(d);
 			if (a == 0x240004) {
 				DrvTileRamBank[1] = d & 0x01;
 				if (DrvTileRamBank[1]) bprintf(PRINT_IMPORTANT, _T("68K Set Tile RAM Bank 1\n"));
@@ -3564,7 +3561,7 @@ static void __fastcall SlyspyProt68KWriteWord(UINT32 a, UINT16 d)
 		case 0x240014:
 		case 0x240016: {		
 			UINT16 *Control1 = (UINT16*)DrvVideo1Ctrl1Ram;
-			Control1[(a - 0x240010) >> 1] = d;
+			Control1[(a - 0x240010) >> 1] = BURN_ENDIAN_SWAP_INT16(d);
 			return;
 		}
 		
@@ -3578,7 +3575,7 @@ static void __fastcall SlyspyProt68KWriteWord(UINT32 a, UINT16 d)
 		case 0x248004:
 		case 0x248006: {		
 			UINT16 *Control0 = (UINT16*)DrvCharCtrl0Ram;
-			Control0[(a - 0x248000) >> 1] = d;
+			Control0[(a - 0x248000) >> 1] = BURN_ENDIAN_SWAP_INT16(d);
 			if (a == 0x248004) {
 				DrvTileRamBank[0] = d & 0x01;
 				if (DrvTileRamBank[0]) bprintf(PRINT_IMPORTANT, _T("68K Set Tile RAM Bank 0\n"));
@@ -3591,7 +3588,7 @@ static void __fastcall SlyspyProt68KWriteWord(UINT32 a, UINT16 d)
 		case 0x248014:
 		case 0x248016: {
 			UINT16 *Control1 = (UINT16*)DrvCharCtrl1Ram;
-			Control1[(a - 0x248010) >> 1] = d;
+			Control1[(a - 0x248010) >> 1] = BURN_ENDIAN_SWAP_INT16(d);
 			return;
 		}
 		
@@ -6275,5 +6272,61 @@ struct BurnDriver BurnDrvSlyspy3 = {
 	BDF_GAME_WORKING | BDF_CLONE | BDF_HISCORE_SUPPORTED, 2, HARDWARE_PREFIX_DATAEAST, GBF_RUNGUN, 0,
 	NULL, Slyspy3RomInfo, Slyspy3RomName, NULL, NULL, NULL, NULL, Dec1InputInfo, SlyspyDIPInfo,
 	SlyspyInit, SlyspyExit, Dec1Frame, SlyspyDraw, SlyspyScan,
+	NULL, 0x400, 256, 240, 4, 3
+};
+
+//========================
+// Add Korean Translation
+//========================
+
+// Bad Dudes vs. Dragonninja (Korean Translation, revision 1)
+//
+
+static struct BurnRomInfo BaddudeskRomDesc[] = {
+	{ "ei04-1k.3c",     0x10000, 0xf749a2e6, BRF_ESS | BRF_PRG },	//  0	68000 Program Code
+	{ "ei01-1k.3a",     0x10000, 0x46535e31, BRF_ESS | BRF_PRG },	//  1
+	{ "ei06k.6c",       0x10000, 0x12f01aaf, BRF_ESS | BRF_PRG },	//  2
+	{ "ei03k.6a",       0x10000, 0x1351ff0e, BRF_ESS | BRF_PRG },	//  3
+
+	{ "ei07.8a",        0x08000, 0x9fb1ef4b, BRF_ESS | BRF_PRG },	//  4	6502 Program
+
+	{ "ei25k.15h",      0x08000, 0xbef6e32b, BRF_GRA },				//  5	Characters
+	{ "ei26k.16h",      0x08000, 0x22a5c879, BRF_GRA },				//  6
+
+	{ "ei18.14d",       0x10000, 0x05cfc3e5, BRF_GRA },				//  7	Tiles 1
+	{ "ei20.17d",       0x10000, 0xe11e988f, BRF_GRA },				//  8
+	{ "ei22.14f",       0x10000, 0xb893d880, BRF_GRA },				//  9
+	{ "ei24.17f",       0x10000, 0x6f226dda, BRF_GRA },				// 10
+
+	{ "ei30.9h",        0x10000, 0x982da0d1, BRF_GRA },				// 11	Tiles 2
+	{ "ei28.9f",        0x10000, 0xf01ebb3b, BRF_GRA },				// 12
+
+	{ "ei15.16c",       0x10000, 0xa38a7d30, BRF_GRA },				// 13	Sprites
+	{ "ei16.17c",       0x08000, 0x17e42633, BRF_GRA },				// 14
+	{ "ei11k.16a",      0x10000, 0x258b914a, BRF_GRA },				// 15
+	{ "ei12k.17a",      0x08000, 0x41a5b2ae, BRF_GRA },				// 16
+	{ "ei13k.13c",      0x10000, 0xfa528477, BRF_GRA },				// 17
+	{ "ei14k.14c",      0x08000, 0x573b6590, BRF_GRA },				// 18
+	{ "ei09k.13a",      0x10000, 0x289bc711, BRF_GRA },				// 19
+	{ "ei10k.14a",      0x08000, 0x11a68eb7, BRF_GRA },				// 20
+
+	{ "ei08.2c",        0x10000, 0x3c87463e, BRF_SND },				// 21	Samples
+
+	{ "ei31.9a",        0x01000, 0x2a8745d2, BRF_OPT },				// 22	I8751
+
+	{ "mb7116e.12c",	0x00200, 0x86e775f8, BRF_OPT }, 			// 23 PROMs
+	{ "mb7122e.17e",	0x00400, 0xa5cda23e, BRF_OPT }, 			// 24
+};
+
+STD_ROM_PICK(Baddudesk)
+STD_ROM_FN(Baddudesk)
+
+struct BurnDriver BurnDrvBaddudesk = {
+	"baddudesk", "baddudes", NULL, NULL, "2026",
+	"Bad Dudes vs. Dragonninja (Korean Translation, revision 1)\0", NULL, "Data East USA", "DEC0",
+	L"Bad Dudes vs. Dragonninja (Korean Translation, revision 1)\0\uBC30\uB4DC \uB4C0\uB4DC\uC2A4 vs. \uB4DC\uB798\uACE4\uB2CC\uC790 (\uD55C\uAD6D\uC5B4 \uBC88\uC5ED, revision 1)\0", NULL, NULL, NULL,
+	BDF_GAME_WORKING | BDF_CLONE | BDF_HACK | BDF_HISCORE_SUPPORTED, 2, HARDWARE_PREFIX_DATAEAST, GBF_SCRFIGHT, 0,
+	NULL, BaddudeskRomInfo, BaddudeskRomName, NULL, NULL, NULL, NULL, Dec0InputInfo, BaddudesDIPInfo,
+	BaddudesInit, BaddudesExit, DrvFrame, BaddudesDraw, BaddudesScan,
 	NULL, 0x400, 256, 240, 4, 3
 };
