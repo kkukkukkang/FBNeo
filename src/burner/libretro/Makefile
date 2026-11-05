@@ -92,6 +92,8 @@ ifneq (,$(findstring unix,$(platform)))
 	ARCH = arm
 	CFLAGS += $(PLATFORM_FLAGS)
 	CXXFLAGS += $(PLATFORM_FLAGS)
+	CC += $(PLATFORM_FLAGS)
+	CXX += $(PLATFORM_FLAGS)
 	ifeq ($(platform),unix)
 		NAMCOS_OPENGL = 0
 		NAMCOS_OPENGL_ES2 = 0
